@@ -6,6 +6,7 @@ enriches this with content data stored in DocumentDB.
 ## Deploying the solution
 To deploy the solution, simply deploy the `WebSite.json` arm template, which is part of the `Suosikki.WebJobs.Deployment` project.
 This can be either done through script (CLI/Powershell) or by using Visual Studio:
+
 1. Open the solution file in Visual Studio
 2. Open the `Solution Explorer`
 3. Select the `SuosikkiRecommendSuosikki.WebJobs.Deployment` project and right click
@@ -39,6 +40,19 @@ Per default, the job runs every day at 8am (this can be easily changed by defini
 The job also triggers the `Suosikki.WebJobs.CognitiveServices` WebJob, which uploads the files to cognitive services. Once all files are uploaded, it will trigger the build of the model.
 It stores the upload statistics and the build results into the stats folder of the `coginputdata` container.
 
+### Customizing the pipeline
+(A more detailed description follows)
+All customization takes place in the `Suosikki.WebJobs.CustomDefinitions` library.
+The `ModelProcessorCollection` wires the customization with the pipeline:
+The `CreateSuosikkiFeatures` function of the WebJob `Suosikki.WebJobs.FeatureCreator` creates an instance of the `ModelProcessorCollection`. This takes the type of the UsageDataEntity, the class which implements the feature creation: 
+
+```
+    IModelProcessorCollection modelProcessors = 
+        new ModelProcessorCollection<UsageEntity>(storageAccount.CreateCloudTableClient(), 
+            cogInputDataContainer, log, queryUserFeatures, queryItemFeatures);
+```
+
+
 ### Configuring the pipeline
 Important WebSite settings and their default values:
 * the container where the csv data will be uploaded: 
@@ -47,16 +61,7 @@ Important WebSite settings and their default values:
     "USAGE_DATA_CONTAINER": "rawusagedata" 
 ```
 
-* Output table names:
-
-``` 
-    "USER_EPISODE_RATING_TABLE": "UserEpisodeRating"
-    "USER_SHOW_RATING_TABLE": "UserShowRating" 
-    "EPISODE_FEATURES_TABLE": "EpisodeFeatures"
-    "SHOW_FEATURES_TABLE": "ShowFeatures"
-    "USER_FEATURES_TABLE": "UserFeatures" 
-```
-* DocumentDB related settings:
+* DocumentDB related settings (optional - depending on model processors, other configurations might be needed (e.g, SQL connection strings)) :
 
 ``` 
     "DOCDB_URI": "YOUR-DOCUMENTDB-URI"
