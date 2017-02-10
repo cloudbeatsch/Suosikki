@@ -12,6 +12,7 @@ namespace Suosikki.WebJobs.CustomDefinitions
         // The format of a usage line is as following:
         //    userId,itemId,datetime(2016/10/01T12:00:03),rating,modelType(E for Episode or S for Session),partitionkey(showId)\r\n
         // these lines are seperated by carrage return and a new line: /r/n
+        // Important: the IsValid property needs to be set to true after succesfully parsing the usage line  
         //
         public override void ParsLine(string line)
         {
