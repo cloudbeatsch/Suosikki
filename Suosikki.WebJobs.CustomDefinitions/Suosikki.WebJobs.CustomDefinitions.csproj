@@ -88,6 +88,7 @@
     <Compile Include="ProcessData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UsageEntity.cs" />
+    <Compile Include="UserFeaturesEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

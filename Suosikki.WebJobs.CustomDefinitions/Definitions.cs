@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,11 +12,5 @@ namespace Suosikki.WebJobs.CustomDefinitions
     {
         public const char SEPERATOR = ',';
         public const string NA_STR = "NA";
-    }
-    public class UserFeaturesEntity : TableEntity
-    {
-        public string Gender { get; set; } = Config.NA_STR;
-        public string Country { get; set; } = Config.NA_STR;
-        public string Birthday { get; set; } = Config.NA_STR;
     }
 }

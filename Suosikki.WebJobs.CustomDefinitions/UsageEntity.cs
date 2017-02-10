@@ -12,8 +12,10 @@ namespace Suosikki.WebJobs.CustomDefinitions
         // The format of a usage line is as following:
         //    userId,itemId,datetime(2016/10/01T12:00:03),rating,modelType(E for Episode or S for Session),partitionkey(showId)\r\n
         // these lines are seperated by carrage return and a new line: /r/n
+        //
         public override void ParsLine(string line)
         {
+            // parsing the usage line by splitting it by the defined seperator
             var split = line.Split(Config.SEPERATOR);
             IsValid = false;
             if (split.Length >= 6)
@@ -46,6 +48,15 @@ namespace Suosikki.WebJobs.CustomDefinitions
 
         public override ModelProcessorBase CreateModelProcessor<TUsage_Entity>(ModelProcessorCreationMsg creationMsg)
         {
+            // In othe current scenario, all model types are processed by the same ModelProcesssor: DocumentDBModelProcessor. That's why
+            // we just return a new instance of DocumentDBModelProcessor whitout even looking at ModelType. If different models 
+            // require different processors, the CreateModelProcessor method might look like this:
+            //
+            //    if (ModelType == ModelTypeEnum.Books.ToString())
+            //       return new BooksModelProcessor<UsageEntity>(creationMsg);
+            //    else if (ModelType == ModelTypeEnum.Music.ToString())
+            //       return new MusicModelProcessor<UsageEntity>(creationMsg);
+
             return new DocumentDBModelProcessor<UsageEntity>(creationMsg);
         }
 
