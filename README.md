@@ -13,9 +13,13 @@ In the case of Cognitive Services, we also upload the catalogue and usage data b
 
 
 ## Deploying the solution
-To deploy the solution, simply press [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+To deploy the solution, simply push the button
+
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
 The deployment will create the following resources:
+* Azure Resource Group
+* Azure AppServicePlan
 * Azure WebSite for hosting the WebJobs
 * Azure storage account
 

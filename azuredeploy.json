@@ -82,7 +82,7 @@
       "apiVersion": "2015-08-01",
       "name": "[parameters('hostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
-      "location": "[parameters('siteLocation']",
+      "location": "[parameters('siteLocation')]",
       "tags": {
         "displayName": "HostingPlan"
       },
