@@ -17,9 +17,6 @@
     "skuCapacity": {
       "value": 2
     },
-    "webSiteAppendix": {
-      "value": "-V1"
-    },
     "cogServicesAPIKey": {
       "value": "YOUR_COGSERVICES_APIKEY"
     }
