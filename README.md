@@ -9,7 +9,7 @@ The reason why we created a pipeline that leverages both approaches is two folde
 With this in mind we created a pipeline that splits the raw usage data into smaller batches for parallel processing, then creates the datasets for the two algorithms. 
 In the case of Cognitive Services, we also upload the catalogue and usage data before we re-train the model:
 
-![Overview](/images/Suosikki_Pipeline.JPG?raw=true "Overview")
+![Overview](/images/Overview_Suosikki_Pipeline.JPG?raw=true "Overview")
 
 
 ## Deploying the solution
