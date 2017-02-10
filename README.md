@@ -1,18 +1,21 @@
 # Suosikki recommendation pipeline
-The WebJobs in this repo create the input data to train the Azure ML and the Cognitive Services recommendation engines.
-To do so, it takes the podcast usage data (which is exported from the SQL DW) and
-enriches this with content data stored in DocumentDB. 
+Suosikki is an automated pipeline which takes incremental raw usage data and creates the datasets needed to train the [Matchbox Recommender](https://msdn.microsoft.com/en-us/library/azure/dn905987.aspx) and the [Recommendations API](https://www.microsoft.com/cognitive-services/en-us/recommendations-api) of [Cognitive Services](https://www.microsoft.com/cognitive-services/en-us/). 
+For the latter, we also upload the data and re-train the model. For Matchbox, re-training and re-deploying the model remains a manual task.
+The reason why we created a pipeline that leverages both approaches is two folded:
+- The two platforms are complementary
+- The ultimate goal is to figure out which service will yield the better results for our partner (determined by A/B testing)
+
+## Overview
+With this in mind we created a pipeline that splits the raw usage data into smaller batches for parallel processing, then creates the datasets for the two algorithms. 
+In the case of Cognitive Services, we also upload the catalogue and usage data before we re-train the model:
+
+![Overview](/images/Suosikki_Pipeline.JPG?raw=true "Overview")
+
 
 ## Deploying the solution
-To deploy the solution, simply deploy the `WebSite.json` arm template, which is part of the `Suosikki.WebJobs.Deployment` project.
-This can be either done through script (CLI/Powershell) or by using Visual Studio:
+To deploy the solution, simply press [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
-1. Open the solution file in Visual Studio
-2. Open the `Solution Explorer`
-3. Select the `SuosikkiRecommendSuosikki.WebJobs.Deployment` project and right click
-4. Select `Deploy`
-
-Deploy the arm template will create the following resources:
+The deployment will create the following resources:
 * Azure WebSite for hosting the WebJobs
 * Azure storage account
 
@@ -40,20 +43,25 @@ Per default, the job runs every day at 8am (this can be easily changed by defini
 The job also triggers the `Suosikki.WebJobs.CognitiveServices` WebJob, which uploads the files to cognitive services. Once all files are uploaded, it will trigger the build of the model.
 It stores the upload statistics and the build results into the stats folder of the `coginputdata` container.
 
-### Customizing the pipeline
-(A more detailed description follows)
-All customization takes place in the `Suosikki.WebJobs.CustomDefinitions` library.
-The `ModelProcessorCollection` wires the customization with the pipeline:
-The `CreateSuosikkiFeatures` function of the WebJob `Suosikki.WebJobs.FeatureCreator` creates an instance of the `ModelProcessorCollection`. This takes the type of the UsageDataEntity, the class which implements the feature creation: 
+## Customizing the pipeline
+All customization takes place in the `Suosikki.WebJobs.CustomDefinitions` library. Here a quick step by step guide to adapt the pipline to your own needs:
+1. ***Define your models*** - the [ModelTypeEnum](https://github.com/cloudbeatsch/Suosikki/blob/master/Suosikki.WebJobs.CustomDefinitions/Definitions.cs#L9) defines what models are created. For instance, the below definition triggers for each of the three models `Music`, `Books` and `Videos` the creation of an item and user table (Matchbox) as well as the upload of catalogue and usage data (Cognitive Services):  
 
+```public enum ModelTypeEnum { Music, Books, Videos };```
+
+2. ***Implement the UsageEntity*** - The [UsageEntity](https://github.com/cloudbeatsch/Suosikki/blob/master/Suosikki.WebJobs.CustomDefinitions/UsageEntity.cs) derives from [UsageEntityBase](https://github.com/cloudbeatsch/Suosikki/blob/master/Suosikki.WebJobs.Common/UsageEntityBase.cs) and is responsible to handle the parsing of the input usage data. It basically extracts all relevant information from the input line and stores it as properties. Beside `ParseLine` it also implements the `CreateModelProcessor` method. This method returns an instance of a ModelProcessor which can deal with the current `ModelType`. The ModelProcessor is responsible to enrich the usage data with content and meta data coming from additional datasources. Different models might require different ModelProcessors.
+
+3. ***Implement the ModelProcessors*** - ModelProcessors create the feature vectors and write them to table storage (Matchbox) and blob storage (Cognitive Services). An example of a ModelProcessor that gets its content data from DocumentDB can be found [here](https://github.com/cloudbeatsch/Suosikki/blob/master/Suosikki.WebJobs.CustomDefinitions/DocumentDBModelProcessor.cs). ModelProcessors derive from [ModelProcessorBase](https://github.com/cloudbeatsch/Suosikki/blob/master/Suosikki.WebJobs.Common/ModelProcessorBase.cs) and are required to implement the following two methods:
 ```
-    IModelProcessorCollection modelProcessors = 
-        new ModelProcessorCollection<UsageEntity>(storageAccount.CreateCloudTableClient(), 
-            cogInputDataContainer, log, queryUserFeatures, queryItemFeatures);
+   protected abstract void ProcessItemFeatures<TUsage_Entity>(UsageEntityBase usageEntity) where TUsage_Entity : UsageEntityBase; 
+   protected abstract void ProcessUserFeatures<TUsage_Entity>(UsageEntityBase usageEntity) where TUsage_Entity : UsageEntityBase; 
+``` 
+4. ***Wire-up the customization*** - Your `UsageEntity` knows how to pars your input data and your ModelProcessors know how to create the feature vectors. Finally we just need to wire them up with the `FeatureCreature` WebJob. To do so, we simply specify our pipelines `UsageEntity` when instantiating a new `ModelProcessorCollection` (see full statement [here](https://github.com/cloudbeatsch/Suosikki/blob/master/jobs/continuous/Suosikki.WebJobs.FeatureCreator/Functions.cs#L37))
+```
+   IModelProcessorCollection modelProcessors = new ModelProcessorCollection<UsageEntity>(...);
 ```
 
-
-### Configuring the pipeline
+## Configuring the pipeline
 Important WebSite settings and their default values:
 * the container where the csv data will be uploaded: 
 
