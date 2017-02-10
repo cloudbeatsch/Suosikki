@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "siteLocation": {
+      "type": "string"
+    },
     "webSiteAppendix": {
       "type": "string",
       "minLength": 2
@@ -80,7 +83,7 @@
       "apiVersion": "2015-08-01",
       "name": "[parameters('hostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('siteLocation']",
       "tags": {
         "displayName": "HostingPlan"
       },
