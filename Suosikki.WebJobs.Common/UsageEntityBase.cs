@@ -12,6 +12,7 @@ namespace Suosikki.WebJobs.Common
         {
 
         }
+        // parses the input line and initializes the properties
         public abstract void ParsLine(string line);
         public string UserId { get; set; }
         public string ItemId { get; set; }

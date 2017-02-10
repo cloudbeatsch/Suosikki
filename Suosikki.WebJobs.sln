@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Suosikki.WebJobs.UsageLoade
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Suosikki.WebJobs.CustomDefinitions", "Suosikki.WebJobs.CustomDefinitions\Suosikki.WebJobs.CustomDefinitions.csproj", "{706EA9E1-4FD9-40BB-9DEE-885BBA288A3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Suosikki.WebJobs.Common", "Suosikki.WebJobs.MessageContracts\Suosikki.WebJobs.Common.csproj", "{7DAC6419-D157-46AB-AAA7-571D1D1EB44E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Suosikki.WebJobs.Common", "Suosikki.WebJobs.Common\Suosikki.WebJobs.Common.csproj", "{7DAC6419-D157-46AB-AAA7-571D1D1EB44E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

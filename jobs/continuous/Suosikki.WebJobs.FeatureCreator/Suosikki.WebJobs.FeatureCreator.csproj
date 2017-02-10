@@ -107,13 +107,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Suosikki.WebJobs.Common\Suosikki.WebJobs.Common.csproj">
+      <Project>{7dac6419-d157-46ab-aaa7-571d1d1eb44e}</Project>
+      <Name>Suosikki.WebJobs.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Suosikki.WebJobs.CustomDefinitions\Suosikki.WebJobs.CustomDefinitions.csproj">
       <Project>{706ea9e1-4fd9-40bb-9dee-885bba288a3f}</Project>
       <Name>Suosikki.WebJobs.CustomDefinitions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Suosikki.WebJobs.MessageContracts\Suosikki.WebJobs.Common.csproj">
-      <Project>{7dac6419-d157-46ab-aaa7-571d1d1eb44e}</Project>
-      <Name>Suosikki.WebJobs.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

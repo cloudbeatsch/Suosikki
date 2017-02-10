@@ -97,7 +97,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Suosikki.WebJobs.MessageContracts\Suosikki.WebJobs.Common.csproj">
+    <ProjectReference Include="..\Suosikki.WebJobs.Common\Suosikki.WebJobs.Common.csproj">
       <Project>{7dac6419-d157-46ab-aaa7-571d1d1eb44e}</Project>
       <Name>Suosikki.WebJobs.Common</Name>
     </ProjectReference>
